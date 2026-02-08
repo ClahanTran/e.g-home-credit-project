@@ -2,12 +2,113 @@
 Home Credit Default Risk - Feature Engineering Pipeline
 ========================================================
 
-This module provides reusable functions for cleaning, transforming, and engineering
-features from the Home Credit dataset. All functions are designed to work on both
-training and test data while maintaining consistency.
+PURPOSE:
+--------
+This script provides production-ready, reusable functions for cleaning, transforming, 
+and engineering features from the Home Credit Default Risk dataset. All functions work 
+on both training and test data while ensuring consistency through a shared configuration.
+
+FEATURES CREATED:
+-----------------
+1. Data Cleaning (Fixes):
+   - DAYS_EMPLOYED = 365243 anomaly → FLAG_UNEMPLOYED_UNKNOWN
+   - Missing values in EXT_SOURCE_1/2/3 (strongest predictors)
+   - Columns with >50% missing data removed
+   - Comprehensive median/mode imputation
+   - Missing value indicator flags (FLAG_MISSING_*)
+
+2. Demographic Features (4):
+   - AGE_YEARS: Age in years (converted from DAYS_BIRTH)
+   - EMPLOYMENT_YEARS: Employment duration in years
+   - REGISTRATION_YEARS: Years since registration
+   - ID_PUBLISH_YEARS: Years since ID published
+
+3. Financial Ratios (7):
+   - CREDIT_TO_INCOME_RATIO: Loan size vs. annual income
+   - ANNUITY_TO_INCOME_RATIO: Debt-to-income ratio (DTI)
+   - LOAN_TO_VALUE_RATIO: Credit amount vs. goods price (LTV)
+   - DOWN_PAYMENT_RATIO: Upfront payment percentage
+   - INCOME_PER_CHILD: Income adjusted for dependents
+   - CREDIT_PER_PERSON: Credit amount per family member
+   - INCOME_TO_AGE_RATIO: Earning capacity indicator
+
+4. Interaction Features (9):
+   - EXT_SOURCE_1x2, EXT_SOURCE_1x3, EXT_SOURCE_2x3 (products)
+   - EXT_SOURCE_MEAN, EXT_SOURCE_SUM (aggregates)
+   - AGE_GROUP: Binned age categories (Young/Middle/Senior)
+   - INCOME_GROUP: Binned income categories (Low/Medium/High)
+   - FLAG_HIGH_RISK_OCCUPATION: Based on EDA findings
+   - DOCUMENT_COMPLETENESS_SCORE: Sum of document submission flags
+
+5. Supplementary Data Aggregation (59 features):
+   - Bureau: 15 features (credit counts, debt ratios, overdue amounts)
+   - Previous Applications: 14 features (approval rates, refusal history)
+   - Installments: 8 features (late payment rates, payment trends)
+   - Credit Card: 13 features (utilization rates, balance statistics)
+   - POS Cash: 9 features (completion rates, days past due statistics)
+
+REQUIRED DATA FILES:
+--------------------
+- application_train.csv (307,511 rows × 122 columns)
+- application_test.csv (48,744 rows × 121 columns)
+- bureau.csv (optional, 1.7M records)
+- previous_application.csv (optional, 1.6M records)
+- installments_payments.csv (optional, 13.6M records)
+- credit_card_balance.csv (optional, 3.8M records)
+- POS_CASH_balance.csv (optional, 10M records)
+
+OUTPUT PRODUCED:
+----------------
+- Processed training data: 307,511 rows × ~190 columns
+- Processed test data: 48,744 rows × ~189 columns (no TARGET)
+- Files: application_train_processed.csv, application_test_processed.csv
+
+USAGE EXAMPLE:
+--------------
+    import polars as pl
+    from feature_engineering import process_pipeline, save_processed_data
+
+    # Load data
+    app_train = pl.read_csv('application_train.csv')
+    app_test = pl.read_csv('application_test.csv')
+    bureau = pl.read_csv('bureau.csv')
+    prev_app = pl.read_csv('previous_application.csv')
+    installments = pl.read_csv('installments_payments.csv')
+    credit_card = pl.read_csv('credit_card_balance.csv')
+    pos_cash = pl.read_csv('POS_CASH_balance.csv')
+
+    # Run complete pipeline (handles both train and test consistently)
+    train_processed, test_processed = process_pipeline(
+        app_train, app_test, bureau, prev_app,
+        installments, credit_card, pos_cash
+    )
+
+    # Save results
+    save_processed_data(train_processed, test_processed, output_dir='./output')
+
+    # Or process application data only (no supplementary data)
+    train_processed, test_processed = process_pipeline(app_train, app_test)
+
+TRAIN/TEST WORKFLOW:
+--------------------
+The script ensures consistency between training and test data:
+1. FeatureConfig stores statistics from training data (medians, modes)
+2. Test data uses same statistics for imputation (no data leakage)
+3. Identical columns created in both datasets (except TARGET)
+4. Automatic validation prevents train/test mismatch
+
+KEY FUNCTIONS:
+--------------
+- process_pipeline(): Master function for complete processing
+- clean_application_data(): Data cleaning and imputation
+- engineer_application_features(): Feature engineering
+- aggregate_bureau_data(): Bureau data aggregation
+- aggregate_previous_application_data(): Previous application aggregation
+- save_processed_data(): Save results to CSV files
 
 Author: Clahan Tran
 Date: February 7, 2026
+Version: 1.0
 """
 
 import polars as pl
