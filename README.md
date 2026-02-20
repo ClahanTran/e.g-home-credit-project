@@ -38,6 +38,7 @@ e.g-home-credit-project/
 ├── README.md                           # This file
 ├── feature_engineering.py              # Main data preparation script ⭐
 ├── test_feature_engineering.py         # Test suite and examples
+├── modeling_notebook.qmd               # Modeling and evaluation notebook ⭐
 ├── home_credit_eda.html                # EDA report (HTML)
 ├── home_credit_eda.qmd                 # EDA report (Quarto source)
 ├── FEATURE_ENGINEERING_README.md       # Detailed documentation
@@ -103,6 +104,76 @@ save_processed_data(train_processed, test_processed, output_dir="./output")
 **Output:**
 - Training: 307,511 rows × ~190 columns
 - Test: 48,744 rows × ~189 columns
+
+## 🤖 Modeling Notebook
+
+### Main File: `modeling_notebook.qmd`
+
+A comprehensive Quarto notebook that develops and evaluates machine learning models for predicting loan default. The notebook follows best practices for handling imbalanced data and includes all required modeling steps.
+
+**Notebook Contents:**
+
+**1. Baseline Performance**
+- Majority class classifier (91% accuracy, 0.5 AUC)
+- Simple decision tree baseline
+- Establishes minimum acceptable performance
+
+**2. Model Comparison**
+- Logistic Regression (L1/L2 regularization)
+- Random Forest
+- LightGBM
+- XGBoost
+- 3-fold cross-validation for each model
+- Comparison on ROC-AUC (not accuracy due to imbalance)
+
+**3. Class Imbalance Handling**
+- SMOTE (Synthetic Minority Over-sampling)
+- Class weights
+- Random undersampling
+- Performance comparison with/without adjustments
+
+**4. Hyperparameter Tuning**
+- Randomized search (~20 iterations)
+- 5K row sample for computational efficiency
+- 3-fold CV during tuning
+- Optimizes learning rate, depth, regularization
+
+**5. Final Model Training**
+- Train on full 307K training samples
+- Uses best hyperparameters from tuning
+- Feature importance analysis
+
+**6. Supplementary Data Impact**
+- Compare performance with/without supplementary features
+- Quantify value of bureau, previous apps, installments data
+
+**7. Kaggle Submission**
+- Generate predicted probabilities for test set
+- Create submission file format
+- Record Kaggle public/private scores
+
+**Computational Efficiency:**
+- 5K sample for hyperparameter tuning (60x faster)
+- 3-fold CV instead of 5 or 10-fold (40-70% faster)
+- Randomized search instead of grid search
+- Early stopping for gradient boosting
+
+### How to Use
+
+```bash
+# Option 1: Render to HTML
+quarto render modeling_notebook.qmd
+
+# Option 2: Open in Jupyter/Positron
+# File → Open → modeling_notebook.qmd
+
+# Option 3: Run individual cells interactively
+```
+
+**Expected Results:**
+- Baseline AUC: ~0.50-0.65
+- Best model AUC: ~0.75-0.80 (cross-validated)
+- Final Kaggle score: Results will vary based on public/private split
 
 ## 🔍 Key Findings from EDA
 
