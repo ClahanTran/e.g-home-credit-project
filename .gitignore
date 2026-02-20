@@ -1,0 +1,65 @@
+# Model artifacts - do not commit
+*.pkl
+*.joblib
+*.h5
+*.pt
+*.pth
+*.ckpt
+*.model
+
+# Processed data files - do not commit
+*_processed.csv
+application_train_processed.csv
+application_test_processed.csv
+
+# Kaggle submission files - do not commit
+submission.csv
+submission_*.csv
+
+# Large data files - do not commit
+*.csv
+!sample*.csv
+bureau.csv
+previous_application.csv
+installments_payments.csv
+credit_card_balance.csv
+POS_CASH_balance.csv
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Quarto/R
+.quarto/
+*_cache/
+*_files/
+.Rproj.user/
+.Rhistory
+.RData
+
+# Keep documentation
+!README.md
+!*.qmd
+!*.Rmd
+!*.html
