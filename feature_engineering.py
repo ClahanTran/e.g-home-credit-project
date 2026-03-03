@@ -472,15 +472,30 @@ def engineer_interaction_features(df: pl.DataFrame) -> pl.DataFrame:
     pl.DataFrame
         Dataframe with interaction features
     """
-    df = df.with_columns([
-        # EXT_SOURCE interactions (multiply strongest predictors)
-        (pl.col('EXT_SOURCE_1') * pl.col('EXT_SOURCE_2')).alias('EXT_SOURCE_1x2'),
-        (pl.col('EXT_SOURCE_1') * pl.col('EXT_SOURCE_3')).alias('EXT_SOURCE_1x3'),
-        (pl.col('EXT_SOURCE_2') * pl.col('EXT_SOURCE_3')).alias('EXT_SOURCE_2x3'),
-        
-        # Mean and sum of EXT_SOURCE scores
-        ((pl.col('EXT_SOURCE_1') + pl.col('EXT_SOURCE_2') + pl.col('EXT_SOURCE_3')) / 3).alias('EXT_SOURCE_MEAN'),
-        (pl.col('EXT_SOURCE_1') + pl.col('EXT_SOURCE_2') + pl.col('EXT_SOURCE_3')).alias('EXT_SOURCE_SUM'),
+    # Check which EXT_SOURCE columns exist
+    ext_cols = [col for col in ['EXT_SOURCE_1', 'EXT_SOURCE_2', 'EXT_SOURCE_3'] if col in df.columns]
+    
+    interactions = []
+    
+    # Create interactions only for existing EXT_SOURCE columns
+    if 'EXT_SOURCE_2' in ext_cols and 'EXT_SOURCE_3' in ext_cols:
+        interactions.append((pl.col('EXT_SOURCE_2') * pl.col('EXT_SOURCE_3')).alias('EXT_SOURCE_2x3'))
+    
+    if 'EXT_SOURCE_1' in ext_cols and 'EXT_SOURCE_2' in ext_cols:
+        interactions.append((pl.col('EXT_SOURCE_1') * pl.col('EXT_SOURCE_2')).alias('EXT_SOURCE_1x2'))
+    
+    if 'EXT_SOURCE_1' in ext_cols and 'EXT_SOURCE_3' in ext_cols:
+        interactions.append((pl.col('EXT_SOURCE_1') * pl.col('EXT_SOURCE_3')).alias('EXT_SOURCE_1x3'))
+    
+    # Mean and sum of available EXT_SOURCE scores
+    if len(ext_cols) > 0:
+        ext_sum = pl.col(ext_cols[0])
+        for col in ext_cols[1:]:
+            ext_sum = ext_sum + pl.col(col)
+        interactions.append((ext_sum / len(ext_cols)).alias('EXT_SOURCE_MEAN'))
+        interactions.append(ext_sum.alias('EXT_SOURCE_SUM'))
+    
+    df = df.with_columns(interactions + [
         
         # Age bins (young, middle, senior)
         pl.when(pl.col('DAYS_BIRTH') / -365.25 < 30).then(pl.lit('Young'))
