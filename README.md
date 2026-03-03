@@ -214,8 +214,8 @@ After systematic evaluation, **LightGBM with SMOTE and hyperparameter tuning** w
 - **Improvement: +0.04 AUC** - supplementary data significantly enhances predictions
 
 **Kaggle Score:**
-- Public Leaderboard: **[TO BE UPDATED AFTER SUBMISSION]**
-- Private Leaderboard: **[TO BE UPDATED AFTER SUBMISSION]**
+- Public Leaderboard: **0.76472** ✅
+- Private Leaderboard: **[Will be revealed after competition ends]**
 - Expected range based on CV: 0.75-0.78
 
 **Top 5 Most Important Features:**

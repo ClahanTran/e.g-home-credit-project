@@ -1001,8 +1001,8 @@ print("="*70)
 print("""
 📊 After submitting to Kaggle, record your score here:
 
-Public Leaderboard Score: [TO BE UPDATED]
-Private Leaderboard Score: [TO BE UPDATED]
+Public Leaderboard Score: **0.76472** ✅
+Private Leaderboard Score: [Will be revealed after competition ends]
 
 Expected Range (based on CV): ~{:.4f} AUC
 
