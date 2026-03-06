@@ -63,3 +63,24 @@ Thumbs.db
 !*.qmd
 !*.Rmd
 !*.html
+
+# Model artifacts and submission files (save locally, don't commit)
+submission.csv
+*.pkl
+*.joblib
+*.h5
+*.pt
+*.pth
+*_temp.csv
+train_temp.csv
+test_temp.csv
+
+# Model outputs
+*.model
+*.bin
+
+# Large processed data files (keep locally)
+*_processed.csv
+application_train_processed.csv
+application_test_processed.csv
+

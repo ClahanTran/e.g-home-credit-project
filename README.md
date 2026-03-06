@@ -218,6 +218,108 @@ After systematic evaluation, **LightGBM with SMOTE and hyperparameter tuning** w
 - Private Leaderboard: **[Will be revealed after competition ends]**
 - Expected range based on CV: 0.75-0.78
 
+
+## 📋 Model Card
+
+**Document:** [model_card.html](model_card.html)
+
+Professional model documentation following industry best practices for ML deployment.
+
+### Executive Summary
+
+**Recommendation:** Deploy LightGBM model with **0.35 decision threshold**
+
+- **Expected ROI:** 12-15% improvement in portfolio profitability
+- **Approval Rate:** ~65% of applicants (maintaining credit access)
+- **Default Rate:** Projected ~12% among approved loans (vs. 18% baseline)
+- **Validated Performance:** 0.7647 AUC on Kaggle test set
+
+### Decision Threshold Analysis
+
+**Optimal Threshold: 0.35**
+
+Based on industry-standard cost assumptions:
+- Average loan profit (if repaid): **$2,500**
+- Loss given default: **-$8,000**
+- Recovery rate: **20%**
+
+**Sources:** World Bank (2023), CGAP (2022), Moody's Analytics (2023), Federal Reserve (2022), European Banking Authority (2022), TransUnion (2023)
+
+**Financial Impact (per 100,000 applicants):**
+- Projected profit: **$78M**
+- Expected value per loan: **$1,200**
+- Approval rate: **65%** (65,000 approved)
+- Estimated defaults: **12%** among approved
+
+### Explainability (SHAP Analysis)
+
+**Top 5 Predictive Features:**
+1. **EXT_SOURCE_2** (14.5% importance) - External credit score
+2. **EXT_SOURCE_3** (13.2% importance) - External credit score
+3. **AGE_YEARS** (9.8% importance) - Applicant age
+4. **CREDIT_TO_INCOME_RATIO** (8.7% importance) - Debt leverage
+5. **BUREAU_TOTAL_CREDIT** (7.6% importance) - Total external credit
+
+### Adverse Action Mapping
+
+Human-readable denial reasons for regulatory compliance:
+
+| Model Feature | Consumer-Friendly Reason |
+|--------------|-------------------------|
+| EXT_SOURCE_2 (low) | Limited external credit history or low credit score |
+| EXT_SOURCE_3 (low) | Insufficient credit history from credit bureaus |
+| AGE_YEARS (low) | Limited financial track record due to age |
+| CREDIT_TO_INCOME_RATIO (high) | Debt obligations high relative to income |
+| BUREAU_TOTAL_CREDIT (low) | Limited credit history with other lenders |
+
+### Fairness Analysis
+
+**Gender Disparity Identified:**
+- Male approval rate: **68%**
+- Female approval rate: **62%**
+- **Gap: 6 percentage points** ⚠️
+
+**Education Level:**
+- Secondary: 61%
+- Higher Education: 67%
+- Academic Degree: 72%
+
+**Recommendations:**
+- ✓ Monthly monitoring of approval rates by gender
+- ✓ Root cause investigation of gender gap
+- ✓ Human review for borderline cases (0.30-0.40 probability)
+- ✓ Quarterly fairness audits
+
+### Limitations and Risks
+
+**Known Limitations:**
+- Missing income verification (self-reported data)
+- Limited external credit data (70% coverage)
+- Time period bias (2016-2018 training data, pre-pandemic)
+- Model overfitting (training AUC 0.81 vs test 0.76)
+- Gender disparity requires monitoring
+
+**Risk Assessment:** **MODERATE**
+
+**Deployment Recommendations:**
+- 3-month pilot with 20% of applications
+- Human review for borderline cases
+- Monthly fairness monitoring
+- Quarterly model retraining
+
+### Model Card Sections
+
+The complete model card includes:
+1. ✅ **Model Details** - Architecture, data, hyperparameters
+2. ✅ **Intended Use** - Users, decisions, regulatory constraints
+3. ✅ **Performance Metrics** - AUC, precision, recall, confusion matrix
+4. ✅ **Decision Threshold Analysis** - Cost assumptions, expected value
+5. ✅ **Explainability** - SHAP analysis on 1000-row sample
+6. ✅ **Adverse Action Mapping** - Compliance-ready denial reasons
+7. ✅ **Fairness Analysis** - Gender and education approval rates
+8. ✅ **Limitations and Risks** - Deployment considerations
+9. ✅ **Monitoring Plan** - Production metrics and retraining schedule
+
 **Top 5 Most Important Features:**
 1. EXT_SOURCE_2 (external credit score)
 2. EXT_SOURCE_3 (external credit score)
